@@ -2,6 +2,7 @@ from odoo import models, fields
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
+    fiscal_country_codes = fields.Char(string='Fiscal country codes')
 
     tipo_deudor = fields.Selection(
         [

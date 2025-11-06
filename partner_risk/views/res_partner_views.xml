@@ -5,12 +5,11 @@
     <field name="inherit_id" ref="base.view_partner_form"/>
     <field name="arch" type="xml">
       <!-- insertar después del campo 'name' para máxima compatibilidad -->
-      <xpath expr="//field[@name='name']" position="after">
-        <group string="Riesgo">
+      <xpath expr="//field[@name='category_id']" position="after">
           <field name="tipo_deudor"/>
           <field name="es_residente"/>
-        </group>
       </xpath>
     </field>
   </record>
+  
 </odoo>
