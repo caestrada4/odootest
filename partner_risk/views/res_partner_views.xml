@@ -1,0 +1,16 @@
+<odoo>
+  <record id="view_partner_form_inherit_risk" model="ir.ui.view">
+    <field name="name">res.partner.form.inherit.risk</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <!-- insertar después del campo 'name' para máxima compatibilidad -->
+      <xpath expr="//field[@name='name']" position="after">
+        <group string="Riesgo">
+          <field name="tipo_deudor"/>
+          <field name="es_residente"/>
+        </group>
+      </xpath>
+    </field>
+  </record>
+</odoo>
