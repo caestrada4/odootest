@@ -17,10 +17,8 @@ para que puedas comenzar a desarrollar extensiones sobre sale.order.
     ],
     'license': 'AGPL-3',
     'data': [
+        'views/sale_order_views.xml',
 
-    ],
-    'demo': [
-        'demo/demo.xml',
     ],
     'installable': True,
     'application': False,
