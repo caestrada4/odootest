@@ -1,5 +1,5 @@
 {
-    'name': 'Library Management',
+    'name': 'Library Managements',
     'version': '1.0', 
     'summary': 'Manage library books and members',
     'description': 'A module to manage library books, members, and borrowing activities.',  
