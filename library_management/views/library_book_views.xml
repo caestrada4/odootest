@@ -9,6 +9,11 @@
                 <field name="author" />
                 <field name="published_date" />
                 <field name="isbn" />
+                <field name="pages" />
+                <field name="description" />
+                <field name="available" />
+                <field name="price" />
+                <field name="editorial_id" />
             </list>
         </field>
 
@@ -25,6 +30,11 @@
                         <field name="author" />
                         <field name="published_date" />
                         <field name="isbn" />
+                        <field name="pages" />
+                        <field name="description" />
+                        <field name="available" />
+                        <field name="price" readonly="1" />
+                        <field name="editorial_id" />
                     </group>
                 </sheet>
             </form>
@@ -34,7 +44,7 @@
 
     <menuitem
         id="library_menu"
-        name="Biiblioteca" />
+        name="Biblioteca" />
 
     <record id="library_book_action" model="ir.actions.act_window">
         <field name="name">Libros</field>
@@ -49,5 +59,46 @@
         action="library_book_action"
         sequence="10" />
 
+    <record id="view_library_editorial_tree" model="ir.ui.view">
+        <field name="name">library.editorial.tree</field>
+        <field name="model">library.editorial</field>
+        <field name="arch" type="xml">
+            <list string="Editoriales">
+                <field name="name" />
+                <field name="country" />
+                <field name="phone" />
+            </list>
+        </field>
+    </record>
+
+    <record id="view_library_editorial_form" model="ir.ui.view">
+        <field name="name">library.editorial.form</field>
+        <field name="model">library.editorial</field>
+        <field name="arch" type="xml">
+            <form string="Editorial">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="country" />
+                        <field name="phone" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="library_editorial_action" model="ir.actions.act_window">
+        <field name="name">Editoriales</field>
+        <field name="res_model">library.editorial</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="library_menu_editorials"
+        parent="library_menu"
+        name="Editoriales"
+        action="library_editorial_action"
+        sequence="20" />
 
 </odoo>

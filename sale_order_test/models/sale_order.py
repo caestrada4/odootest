@@ -7,6 +7,8 @@ class SaleOrder(models.Model):
         ('7_dias', '7 días'),
         ('15_dias', '15 días'),
         ('30_dias', '30 días'),
+        ('45_dias', '45 días'),
+        ('60_dias', '60 días'),
     ],string='Validez',help='Período de validez de la cotización',default='15_dias')
 
     x_metodo_pago=fields.Selection([
@@ -30,6 +32,10 @@ class SaleOrder(models.Model):
                 dias = 15
             elif record.x_validez == '30_dias':
                 dias = 30
+            elif record.x_validez == '45_dias':
+                dias = 45
+            elif record.x_validez == '60_dias':
+                dias = 60
             
             if dias==0:
                 record.x_tabla_amortizacion = ""
