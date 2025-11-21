@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_kiosk_kiosk_tree" model="ir.ui.view">
+        <field name="name">kiosk.kiosk.tree</field>
+        <field name="model">kiosk.kiosk</field>
+        <field name="arch" type="xml">
+            <list string="Kiosks">
+                <field name="name" />
+                <field name="kiosk_code" />
+                <field name="model_hw" />
+                <field name="serial_number" />
+                <field name="status" />
+                <field name="cash_level" />
+                <field name="cash_capacity" />
+                <field name="last_seen" />
+                <field name="external_id" />
+
+            </list>
+        </field>
+    </record>
+    <record id="action_kiosk_kiosk" model="ir.actions.act_window">
+        <field name="name">Kiosks</field>
+        <field name="res_model">kiosk.kiosk</field>
+        <field name="view_mode">list</field>
+    </record>
+    <menuitem
+        id="menu_kiosk_root"
+        name="Kiosks"
+        sequence="10"/>
+    <menuitem 
+        id="menu_kiosk_kiosk"
+        parent="menu_kiosk_root"
+        name="Kiosks"
+        action="action_kiosk_kiosk"
+        sequence="10"/>
+
+</odoo>
