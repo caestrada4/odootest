@@ -28,12 +28,12 @@ class Kiosk(models.Model):
     notes=fields.Text(string="Notes", help="Additional notes about the kiosk")
     created_at=fields.Char(string="Created At", readonly=True, help="Timestamp when the kiosk record was created in the external Kiosk API")
     updated_at=fields.Char(string="Updated At", readonly=True, help="Timestamp when the kiosk record was last updated in the external Kiosk API")
-    cash_level=fields.Integer(string="Cash Level", help="Current cash level in the kiosk")
-    cash_capacity=fields.Integer(string="Cash Capacity", help="Maximum cash capacity of the kiosk")
+    cash_level=fields.Float(string="Cash Level", help="Current cash level in the kiosk")
+    cash_capacity=fields.Float(string="Cash Capacity", help="Maximum cash capacity of the kiosk")
 
     def _get_api_base_url(self):
         # Placeholder for actual API base URL retrieval logic
-        icp=self.enf["ir.config_parameter"].sudo()
+        icp=self.env["ir.config_parameter"].sudo()
         return icp.get_param('kiosk_api.base_url', default='http://194.163.154.201:4000/api/kiosks')
     
     def _get_api_headers(self):
@@ -112,3 +112,95 @@ class Kiosk(models.Model):
         }
         return payload
     
+    def _prepare_vals_from_api(self,item):
+        return {
+            'name': item.get('name'),
+            'kiosk_code': item.get('kiosk_code'),
+            'model_hw': item.get('model_hw'),  
+            'serial_number': item.get('serial_number'),
+            'firmware': item.get('firmware'),
+            'location': item.get('location'),
+            'components': item.get('components'),
+            'network_status': item.get('network_status'),
+            'cash_level': item.get('cash_level'),
+            'cash_capacity': item.get('cash_capacity'),
+            'status': item.get('status'),
+            'last_seen': item.get('last_seen'),
+            'install_date': item.get('install_date'),
+            'last_maintenance': item.get('last_maintenance'),
+            'notes': item.get('notes'),
+            'created_at': item.get('created_at'),
+            'updated_at': item.get('updated_at'),
+        }
+
+    @api.model
+    def create(self, vals_list):
+        new_vals_list=[]
+        for vals in vals_list:
+            dummy_rec=self.new(vals)
+            payload=dummy_rec._prepare_api_payload()
+            api_data=dummy_rec._api_request('POST',"",payload)
+
+            if api_data and 'id' in api_data:
+                vals['external_id']=api_data['id']
+                vals_from_api=dummy_rec._prepare_vals_from_api(api_data)
+                vals.update(vals_from_api)
+            new_vals_list.append(vals)
+
+        
+        records=super().create(new_vals_list)
+        return records
+    
+    def write(self, vals):
+
+        res=super().write(vals)
+        for rec in self:
+            if rec.external_id:
+                payload=rec._prepare_api_payload(vals)
+                rec._api_request('PUT',f"{rec.external_id}",payload)
+        return res
+    
+    def unlink(self):
+        
+        for rec in self:
+            if rec.external_id:
+                rec._api_request('DELETE',f"{rec.external_id}")
+
+        return super().unlink()
+    
+    @api.model
+    def action_sync_from_api(self):
+        data=self._api_request('GET',"")
+        if not isinstance(data,list):
+            _logger.warning("Respuesta de API invalida al sincronizar kiosks: %s",data)
+            raise UserError(_("Respuesta de API invalida al sincronizar kiosks"))
+        
+        created=0
+        updated=0
+
+        for item in data:
+            external_id=item.get('id')
+            name= item.get('name')
+
+            if not external_id or not name:
+                continue
+
+            vals=self._prepare_vals_from_api(item)
+            existing=self.search([('external_id','=',external_id)],limit=1)
+            if existing:
+                existing.with_context(no_api_update=True).write(vals)
+                updated += 1
+            else:
+                super(Kiosk,self).create(vals)
+                created += 1
+        
+        return {
+            "type":"ir.actions.client",
+            "tag":"display_notification",
+            "params":{
+                "title": _("Kiosk Sync Completed"),
+                "message": _("Created: %d, Updated: %d") % (created, updated),
+                "sticky": False,
+                "type": "success",
+            }
+        }

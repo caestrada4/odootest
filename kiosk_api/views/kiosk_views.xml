@@ -27,12 +27,31 @@
     <menuitem
         id="menu_kiosk_root"
         name="Kiosks"
-        sequence="10"/>
-    <menuitem 
+        sequence="10" />
+    <menuitem
         id="menu_kiosk_kiosk"
         parent="menu_kiosk_root"
         name="Kiosks"
         action="action_kiosk_kiosk"
-        sequence="10"/>
+        sequence="10" />
 
+    <record id="server_action_sync_kiosks" model="ir.actions.server">
+        <field name="name">Syncs Kiosk Data</field>
+        <field name="model_id" ref="model_kiosk_kiosk" />
+        <field name="state">code</field>
+        <field name="code">
+            action=env['kiosk.kiosk'].action_sync_from_api()
+        </field>
+    </record>
+
+    <record id="action_sync_kiosks_window" model="ir.actions.server">
+        <field name="name">Sync from API Kiosks</field>
+        <field name="model_id" ref="model_kiosk_kiosk" />
+        <field name="binding_model_id" ref="model_kiosk_kiosk" />
+        <field name="binding_type">action</field>
+        <field name="state">code</field>    
+        <field name="code">
+            action = env['kiosk.kiosk'].action_sync_from_api()
+        </field>
+    </record>
 </odoo>
